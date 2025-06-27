@@ -230,6 +230,30 @@ export function useFetchUsersDB() {
     [graphqlRequest]
   );
 
+  const fetchUsernamesUnderMyNetwork = useCallback(async (): Promise<
+    string[]
+  > => {
+    try {
+      const { data, errors } = await graphqlRequest(`
+      query {
+        getUsernamesUnderMyNetwork
+      }
+    `);
+
+      if (errors) {
+        throw new Error(errors.map((err: any) => err.message).join(", "));
+      }
+
+      return data.getUsernamesUnderMyNetwork || [];
+    } catch (error: any) {
+      console.error(
+        "[ERROR] Failed to fetch usernames under my network:",
+        error.message
+      );
+      return [];
+    }
+  }, [graphqlRequest]); // ✅ 의존성은 graphqlRequest만 포함
+
   return {
     users,
     totalUsers,
@@ -237,6 +261,7 @@ export function useFetchUsersDB() {
     error,
     fetchUsersDB,
     fetchUserDBsUnderMyNetwork,
+    fetchUsernamesUnderMyNetwork,
     createUserDB,
     updateUserDB,
     deleteUserDB,

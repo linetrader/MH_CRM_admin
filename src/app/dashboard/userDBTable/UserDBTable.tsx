@@ -1,8 +1,9 @@
+// src/app/dashboard/userDBTable/UserDBTable.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
 import DataTable from "@/components/common/DataTable";
-//import EditUserDBModal from "./";
 import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
 import EditUserDBModal from "./EditUserDBModal";
 

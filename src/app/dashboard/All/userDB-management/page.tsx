@@ -1,5 +1,3 @@
-// src/app/dashboard/All/userDB-management/page.tsx
-
 "use client";
 
 import {
@@ -8,9 +6,6 @@ import {
   Typography,
   Paper,
   Button,
-  Stack,
-  TextField,
-  MenuItem,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
@@ -18,6 +13,10 @@ import UserDBTable from "../../userDBTable/UserDBTable";
 import Pagination from "@/components/common/Pagination";
 import CreateUserDBModal from "./CreateUserDBModal";
 import * as XLSX from "xlsx";
+import UserDBAddActions from "@/components/UserDBAddActions";
+import UserDBTypeChangeActions from "@/components/UserDBTypeChangeActions";
+import UserDBSearchBar from "@/components/UserDBSearchBar";
+import AssignManagerActions from "@/components/AssignManagerActions";
 
 export default function UserDBManagementPage() {
   const {
@@ -28,6 +27,8 @@ export default function UserDBManagementPage() {
     fetchUsersDB,
     deleteUserDB,
     createUserDB,
+    updateUserDB,
+    fetchUsernamesUnderMyNetwork,
   } = useFetchUsersDB();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,6 +37,8 @@ export default function UserDBManagementPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [filterType, setFilterType] = useState("phonenumber");
   const [filteredUsers, setFilteredUsers] = useState<UserDB[]>([]);
+  const [newDBType, setNewDBType] = useState("");
+  const [managerList, setManagerList] = useState<string[]>([]); // 👈 담당자 리스트
 
   const limit = 30;
   const offset = (currentPage - 1) * limit;
@@ -48,6 +51,20 @@ export default function UserDBManagementPage() {
   useEffect(() => {
     setFilteredUsers(users);
   }, [users]);
+
+  useEffect(() => {
+    let ignore = false;
+    const loadManagers = async () => {
+      const result = await fetchUsernamesUnderMyNetwork();
+      if (!ignore) {
+        setManagerList(result);
+      }
+    };
+    loadManagers();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const handleSearch = () => {
     const keyword = searchKeyword.trim().toLowerCase();
@@ -83,6 +100,50 @@ export default function UserDBManagementPage() {
     } catch (error) {
       alert("삭제 중 오류가 발생했습니다.");
       console.error("삭제 실패:", error);
+    }
+  };
+
+  const handleBatchTypeChange = async () => {
+    if (selectedUsers.length === 0) {
+      alert("변경할 사용자를 선택하세요.");
+      return;
+    }
+    if (!newDBType) {
+      alert("변경할 DB 유형을 선택하세요.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `선택된 ${selectedUsers.length}명의 DB 유형을 "${newDBType}"로 변경하시겠습니까?`
+    );
+    if (!confirmed) return;
+
+    try {
+      await Promise.all(
+        selectedUsers.map((user) =>
+          updateUserDB(user.id, { ...user, type: newDBType })
+        )
+      );
+      alert("DB 유형 변경이 완료되었습니다.");
+      setSelectedUsers([]);
+      fetchUsersDB(limit, offset);
+    } catch (error) {
+      alert("DB 유형 변경 중 오류가 발생했습니다.");
+      console.error("DB 유형 변경 실패:", error);
+    }
+  };
+
+  const handleAssignManager = async (manager: string) => {
+    try {
+      await Promise.all(
+        selectedUsers.map((user) => updateUserDB(user.id, { ...user, manager }))
+      );
+      alert("담당자 배정이 완료되었습니다.");
+      setSelectedUsers([]);
+      fetchUsersDB(limit, offset);
+    } catch (error) {
+      alert("담당자 배정 중 오류가 발생했습니다.");
+      console.error("담당자 배정 실패:", error);
     }
   };
 
@@ -146,66 +207,41 @@ export default function UserDBManagementPage() {
         유저 DB 관리
       </Typography>
 
-      <Stack direction="row" spacing={2} mt={3} mb={1} alignItems="center">
-        <TextField
-          select
-          size="small"
-          label="필터 기준"
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          sx={{ width: 140 }}
-        >
-          <MenuItem value="phonenumber">휴대폰번호</MenuItem>
-          <MenuItem value="username">이름</MenuItem>
-          <MenuItem value="manager">담당자</MenuItem>
-          <MenuItem value="type">DB 유형</MenuItem>
-        </TextField>
+      <UserDBSearchBar
+        filterType={filterType}
+        setFilterType={setFilterType}
+        searchKeyword={searchKeyword}
+        setSearchKeyword={setSearchKeyword}
+        onSearch={handleSearch}
+      />
 
-        <TextField
-          size="small"
-          label="검색어 입력"
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          sx={{ minWidth: 200 }}
-        />
+      <UserDBAddActions
+        onOpenCreateModal={() => setShowCreateModal(true)}
+        onExcelUploadClick={() =>
+          document.getElementById("excel-upload")?.click()
+        }
+        onDeleteSelected={handleDeleteSelected}
+      />
 
-        <Button variant="outlined" onClick={handleSearch}>
-          검색
-        </Button>
-      </Stack>
+      <UserDBTypeChangeActions
+        newDBType={newDBType}
+        onDBTypeChange={setNewDBType}
+        onBatchTypeChange={handleBatchTypeChange}
+      />
 
-      <Stack direction="row" spacing={2} mb={2} alignItems="center">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setShowCreateModal(true)}
-        >
-          DB 수동 추가
-        </Button>
+      <AssignManagerActions
+        managers={managerList}
+        selectedUsers={selectedUsers}
+        onAssignManager={handleAssignManager}
+      />
 
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => document.getElementById("excel-upload")?.click()}
-        >
-          DB 엑셀 추가
-        </Button>
-        <input
-          id="excel-upload"
-          type="file"
-          accept=".xlsx, .xls"
-          style={{ display: "none" }}
-          onChange={handleExcelUpload}
-        />
-
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleDeleteSelected}
-        >
-          선택 삭제
-        </Button>
-      </Stack>
+      <input
+        id="excel-upload"
+        type="file"
+        accept=".xlsx, .xls"
+        style={{ display: "none" }}
+        onChange={handleExcelUpload}
+      />
 
       {loading && (
         <Box display="flex" justifyContent="center" mt={3}>
@@ -240,9 +276,9 @@ export default function UserDBManagementPage() {
       {!loading && !error && users.length > 0 && (
         <Paper elevation={2} sx={{ mt: 3, p: 2 }}>
           <UserDBTable
-            users={users}
+            users={filteredUsers}
             onSelectedUsersChange={setSelectedUsers}
-            dbType={""}
+            dbType=""
           />
         </Paper>
       )}
