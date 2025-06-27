@@ -17,14 +17,16 @@ export default function CreateUserDBModal({
   const { createUserDB } = useFetchUsersDB();
 
   const [formData, setFormData] = useState<Partial<UserDB> & { id: string }>({
-    id: "", // 명시적으로 string으로 설정
+    id: "",
     username: "",
     phonenumber: "",
     sex: "",
     incomepath: "",
+    creatorname: "",
     memo: "",
     type: "",
     manager: "",
+    incomedate: "", // ✅ 새 필드 추가
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -42,9 +44,9 @@ export default function CreateUserDBModal({
     setError(null);
     setCreating(true);
 
-    const { id, ...inputWithoutId } = formData; // ⛔️ id 제외
+    const { id, ...inputWithoutId } = formData;
 
-    const created = await createUserDB(inputWithoutId); // ✅ id 없이 호출
+    const created = await createUserDB(inputWithoutId);
 
     setCreating(false);
 
@@ -65,6 +67,7 @@ export default function CreateUserDBModal({
     { label: "상담 기록", name: "memo" },
     { label: "DB 타입", name: "type" },
     { label: "담당자", name: "manager" },
+    { label: "유입 일자", name: "incomedate" }, // ✅ 필드 정의 추가
   ];
 
   return (

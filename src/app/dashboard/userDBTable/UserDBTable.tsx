@@ -73,7 +73,9 @@ export default function UserDBTable({
     { key: "incomepath", label: "유입 경로" },
     { key: "creatorname", label: "크리에이터" },
     { key: "memo", label: "상담 기록" },
+    { key: "type", label: "DB 유형" },
     { key: "manager", label: "담당자" },
+    { key: "incomedate", label: "유입 날짜" },
     {
       key: "createdAt",
       label: "DB 생성 시간",

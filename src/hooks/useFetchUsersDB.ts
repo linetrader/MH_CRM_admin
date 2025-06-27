@@ -29,6 +29,7 @@ export function useFetchUsersDB() {
                 memo
                 type
                 manager
+                incomedate
                 createdAt
                 updatedAt
               }
@@ -76,6 +77,7 @@ export function useFetchUsersDB() {
               memo
               type
               manager
+              incomedate
               createdAt
               updatedAt
             }
@@ -121,6 +123,7 @@ export function useFetchUsersDB() {
             memo
             type
             manager
+            incomedate
             createdAt
             updatedAt
           }

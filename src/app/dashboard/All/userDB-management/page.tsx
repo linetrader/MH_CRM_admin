@@ -176,8 +176,9 @@ export default function UserDBManagementPage() {
             incomepath: row.incomepath || "",
             creatorname: row.creatorname || "",
             memo: row.memo || "",
-            type: row.type || "potential",
+            type: row.type || "els",
             manager: row.manager || "",
+            incomedate: row.incomedate || "",
           });
 
           if (!result) failed.push(row);

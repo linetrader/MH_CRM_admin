@@ -8,6 +8,7 @@ interface UserDB {
   memo: string;
   type: string;
   manager: string;
+  incomedate: string;
   createdAt: string;
   updatedAt: string;
 }
