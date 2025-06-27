@@ -147,6 +147,25 @@ export default function UserDBManagementPage() {
     }
   };
 
+  // 날짜 형식을 안전하게 변환하는 함수
+  const parseExcelDate = (value: any): string => {
+    if (!value) return "";
+    if (typeof value === "number") {
+      // Excel serial date to JS Date
+      const date = XLSX.SSF.parse_date_code(value);
+      if (date) {
+        const yyyy = date.y.toString().padStart(4, "0");
+        const mm = date.m.toString().padStart(2, "0");
+        const dd = date.d.toString().padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    }
+    if (value instanceof Date) {
+      return value.toISOString().split("T")[0];
+    }
+    return value.toString();
+  };
+
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -178,7 +197,7 @@ export default function UserDBManagementPage() {
             memo: row.memo || "",
             type: row.type || "els",
             manager: row.manager || "",
-            incomedate: row.incomedate || "",
+            incomedate: parseExcelDate(row.incomedate) || "",
           });
 
           if (!result) failed.push(row);
