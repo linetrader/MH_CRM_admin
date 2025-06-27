@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
-import UserDBTable from "./UserDBTable";
+import UserDBTable from "../../userDBTable/UserDBTable";
 import Pagination from "@/components/common/Pagination";
 import CreateUserDBModal from "./CreateUserDBModal";
 import * as XLSX from "xlsx";
@@ -239,7 +239,11 @@ export default function UserDBManagementPage() {
 
       {!loading && !error && users.length > 0 && (
         <Paper elevation={2} sx={{ mt: 3, p: 2 }}>
-          <UserDBTable users={users} onSelectedUsersChange={setSelectedUsers} />
+          <UserDBTable
+            users={users}
+            onSelectedUsersChange={setSelectedUsers}
+            dbType={""}
+          />
         </Paper>
       )}
 

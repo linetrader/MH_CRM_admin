@@ -57,6 +57,54 @@ export function useFetchUsersDB() {
     [graphqlRequest]
   );
 
+  const fetchUserDBsUnderMyNetwork = useCallback(
+    async (limit = 20, offset = 0, type?: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, errors } = await graphqlRequest(
+          `
+        query GetUserDBsUnderMyNetwork($limit: Int, $offset: Int, $type: String) {
+          getUserDBsUnderMyNetwork(limit: $limit, offset: $offset, type: $type) {
+            users {
+              id
+              username
+              phonenumber
+              sex
+              incomepath
+              creatorname
+              memo
+              type
+              manager
+              createdAt
+              updatedAt
+            }
+            totalUsers
+          }
+        }
+        `,
+          { limit, offset, type }
+        );
+
+        if (errors) {
+          setError(errors.map((err: any) => err.message).join(", "));
+          return;
+        }
+
+        setUsers(data.getUserDBsUnderMyNetwork.users || []);
+        setTotalUsers(data.getUserDBsUnderMyNetwork.totalUsers || 0);
+      } catch (err: any) {
+        setError(
+          err?.message ||
+            "산하 유저 DB 데이터를 불러오는 중 오류가 발생했습니다."
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [graphqlRequest]
+  );
+
   const createUserDB = useCallback(
     async (newUser: Partial<UserDB>): Promise<UserDB | null> => {
       try {
@@ -184,10 +232,11 @@ export function useFetchUsersDB() {
 
   return {
     users,
-    totalUsers, // ✅ 포함
+    totalUsers,
     loading,
     error,
     fetchUsersDB,
+    fetchUserDBsUnderMyNetwork,
     createUserDB,
     updateUserDB,
     deleteUserDB,

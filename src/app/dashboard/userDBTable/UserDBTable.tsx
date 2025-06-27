@@ -1,24 +1,26 @@
-// src/app/dashboard/All/userDB-management/UserDBTable.tsx
+"use client";
 
 import { useEffect, useState } from "react";
 import DataTable from "@/components/common/DataTable";
-import EditUserDBModal from "./EditUserDBModal";
+//import EditUserDBModal from "./";
 import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
+import EditUserDBModal from "./EditUserDBModal";
 
 interface Props {
   users: UserDB[];
+  dbType: string; // ✅ 추가
   onSelectedUsersChange: (selected: UserDB[]) => void;
 }
 
-export default function UserDBTable({ users, onSelectedUsersChange }: Props) {
+export default function UserDBTable({
+  users,
+  dbType,
+  onSelectedUsersChange,
+}: Props) {
   const { updateUserDB } = useFetchUsersDB();
+
   const [selectedRows, setSelectedRows] = useState<UserDB[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserDB | null>(null);
-  const [userDBList, setUserDBList] = useState<UserDB[]>(users);
-
-  useEffect(() => {
-    setUserDBList(users);
-  }, [users]);
 
   useEffect(() => {
     onSelectedUsersChange(selectedRows);
@@ -35,13 +37,8 @@ export default function UserDBTable({ users, onSelectedUsersChange }: Props) {
   const handleSaveUser = async (updatedUser: UserDB) => {
     try {
       const isUpdated = await updateUserDB(updatedUser.id, updatedUser);
-
       if (isUpdated) {
-        setUserDBList((prev) =>
-          prev.map((user) =>
-            user.id === updatedUser.id ? { ...user, ...updatedUser } : user
-          )
-        );
+        alert("업데이트 완료");
       }
     } catch (error) {
       console.error("Error updating user:", error);
@@ -98,7 +95,7 @@ export default function UserDBTable({ users, onSelectedUsersChange }: Props) {
   return (
     <>
       <DataTable
-        data={userDBList}
+        data={users}
         columns={columns}
         onAction={handleEdit}
         selectedRows={selectedRows}
@@ -109,6 +106,7 @@ export default function UserDBTable({ users, onSelectedUsersChange }: Props) {
       {selectedUser && (
         <EditUserDBModal
           user={selectedUser}
+          //dbType={dbType} // ✅ 전달
           onClose={handleCloseModal}
           onSave={handleSaveUser}
         />
