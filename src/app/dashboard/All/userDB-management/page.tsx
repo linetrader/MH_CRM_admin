@@ -150,20 +150,26 @@ export default function UserDBManagementPage() {
   // 날짜 형식을 안전하게 변환하는 함수
   const parseExcelDate = (value: any): string => {
     if (!value) return "";
+
+    // Excel 날짜 코드 (숫자)인 경우
     if (typeof value === "number") {
-      // Excel serial date to JS Date
-      const date = XLSX.SSF.parse_date_code(value);
-      if (date) {
-        const yyyy = date.y.toString().padStart(4, "0");
-        const mm = date.m.toString().padStart(2, "0");
-        const dd = date.d.toString().padStart(2, "0");
-        return `${yyyy}-${mm}-${dd}`;
-      }
+      const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // Excel 시작일
+      const date = new Date(excelEpoch.getTime() + value * 24 * 60 * 60 * 1000);
+      return date.toISOString().split("T")[0]; // yyyy-mm-dd
     }
-    if (value instanceof Date) {
+
+    // Date 객체인 경우
+    if (value instanceof Date && !isNaN(value.getTime())) {
       return value.toISOString().split("T")[0];
     }
-    return value.toString();
+
+    // 문자열일 경우
+    const parsed = new Date(value);
+    if (!isNaN(parsed.getTime())) {
+      return parsed.toISOString().split("T")[0];
+    }
+
+    return ""; // 유효하지 않은 경우 빈 문자열 반환
   };
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,6 +194,7 @@ export default function UserDBManagementPage() {
         const failed: any[] = [];
 
         for (const row of jsonData) {
+          console.log(row.incomedate, parseExcelDate(row.incomedate));
           const result = await createUserDB({
             username: row.username || "",
             phonenumber: row.phonenumber?.toString() || "",
