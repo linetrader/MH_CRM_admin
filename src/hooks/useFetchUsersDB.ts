@@ -3,41 +3,45 @@
 import { useState, useCallback } from "react";
 import { useGraphQL } from "@/utils/graphqlApi";
 
+const USER_FIELDS = `
+  id
+  username
+  phonenumber
+  sex
+  incomepath
+  creatorname
+  memo
+  type
+  manager
+  incomedate
+  createdAt
+  updatedAt
+`;
+
 export function useFetchUsersDB() {
   const { graphqlRequest } = useGraphQL();
   const [users, setUsers] = useState<UserDB[]>([]);
-  const [totalUsers, setTotalUsers] = useState(0); // ✅ 추가
+  const [totalUsers, setTotalUsers] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUsersDB = useCallback(
-    async (limit = 20, offset = 0) => {
+  const fetchUserData = useCallback(
+    async (queryName: string, queryArgs: string, variables: any) => {
       setLoading(true);
       setError(null);
       try {
         const { data, errors } = await graphqlRequest(
           `
-          query FindAllUsers($limit: Int, $offset: Int) {
-            findAllUsers(limit: $limit, offset: $offset) {
+          query ${queryName}($limit: Int, $offset: Int, $type: String) {
+            ${queryName}(limit: $limit, offset: $offset, type: $type) {
               users {
-                id
-                username
-                phonenumber
-                sex
-                incomepath
-                creatorname
-                memo
-                type
-                manager
-                incomedate
-                createdAt
-                updatedAt
+                ${USER_FIELDS}
               }
               totalUsers
             }
           }
           `,
-          { limit, offset }
+          variables
         );
 
         if (errors) {
@@ -45,8 +49,8 @@ export function useFetchUsersDB() {
           return;
         }
 
-        setUsers(data.findAllUsers.users || []);
-        setTotalUsers(data.findAllUsers.totalUsers || 0);
+        setUsers(data[queryName].users || []);
+        setTotalUsers(data[queryName].totalUsers || 0);
       } catch (err: any) {
         setError(
           err?.message || "유저 DB 데이터를 불러오는 중 오류가 발생했습니다."
@@ -58,53 +62,49 @@ export function useFetchUsersDB() {
     [graphqlRequest]
   );
 
-  const fetchUserDBsUnderMyNetwork = useCallback(
-    async (limit = 20, offset = 0, type?: string) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { data, errors } = await graphqlRequest(
-          `
-        query GetUserDBsUnderMyNetwork($limit: Int, $offset: Int, $type: String) {
-          getUserDBsUnderMyNetwork(limit: $limit, offset: $offset, type: $type) {
-            users {
-              id
-              username
-              phonenumber
-              sex
-              incomepath
-              creatorname
-              memo
-              type
-              manager
-              incomedate
-              createdAt
-              updatedAt
-            }
-            totalUsers
-          }
+  const fetchUserDBsForMainUser = useCallback(
+    (limit = 30, offset = 0, type?: string) => {
+      return fetchUserData(
+        "getUserDBsForMainUser",
+        "$limit: Int, $offset: Int, $type: String",
+        {
+          limit,
+          offset,
+          type,
         }
-        `,
-          { limit, offset, type }
-        );
-
-        if (errors) {
-          setError(errors.map((err: any) => err.message).join(", "));
-          return;
-        }
-
-        setUsers(data.getUserDBsUnderMyNetwork.users || []);
-        setTotalUsers(data.getUserDBsUnderMyNetwork.totalUsers || 0);
-      } catch (err: any) {
-        setError(
-          err?.message ||
-            "산하 유저 DB 데이터를 불러오는 중 오류가 발생했습니다."
-        );
-      } finally {
-        setLoading(false);
-      }
+      );
     },
-    [graphqlRequest]
+    [fetchUserData]
+  );
+
+  const fetchUserDBsByMyUsername = useCallback(
+    (limit = 30, offset = 0, type?: string) => {
+      return fetchUserData(
+        "getUserDBsByMyUsername",
+        "$limit: Int, $offset: Int, $type: String",
+        {
+          limit,
+          offset,
+          type,
+        }
+      );
+    },
+    [fetchUserData]
+  );
+
+  const fetchUserDBsUnderMyNetwork = useCallback(
+    (limit = 30, offset = 0, type?: string) => {
+      return fetchUserData(
+        "getUserDBsUnderMyNetwork",
+        "$limit: Int, $offset: Int, $type: String",
+        {
+          limit,
+          offset,
+          type,
+        }
+      );
+    },
+    [fetchUserData]
   );
 
   const createUserDB = useCallback(
@@ -112,39 +112,20 @@ export function useFetchUsersDB() {
       try {
         const { data, errors } = await graphqlRequest(
           `
-        mutation CreateUserDB($createUserInput: CreateUserInput!) {
-          createUserDB(createUserInput: $createUserInput) {
-            id
-            username
-            phonenumber
-            sex
-            incomepath
-            creatorname
-            memo
-            type
-            manager
-            incomedate
-            createdAt
-            updatedAt
+          mutation CreateUserDB($createUserInput: CreateUserInput!) {
+            createUserDB(createUserInput: $createUserInput) {
+              ${USER_FIELDS}
+            }
           }
-        }
-        `,
+          `,
           { createUserInput: newUser }
         );
 
-        // 🚫 서버에서 오류는 없지만 중복으로 null이 반환될 수 있음
-        if (errors) {
+        if (errors)
           throw new Error(errors.map((err: any) => err.message).join(", "));
-        }
-
-        // 중복일 경우 null 반환
         return data.createUserDB ?? null;
       } catch (error: any) {
-        // ❗ "SKIP"이 포함된 메시지는 무시
-        if (error?.message?.includes("SKIP")) {
-          return null;
-        }
-
+        if (error?.message?.includes("SKIP")) return null;
         console.error("[ERROR] Failed to create userDB:", error.message);
         return null;
       }
@@ -262,8 +243,9 @@ export function useFetchUsersDB() {
     totalUsers,
     loading,
     error,
-    fetchUsersDB,
     fetchUserDBsUnderMyNetwork,
+    fetchUserDBsByMyUsername,
+    fetchUserDBsForMainUser,
     fetchUsernamesUnderMyNetwork,
     createUserDB,
     updateUserDB,

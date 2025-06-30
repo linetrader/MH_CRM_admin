@@ -20,13 +20,13 @@ import UserDBTypeChangeActions from "@/components/UserDBTypeChangeActions";
 import UserDBSearchBar from "@/components/UserDBSearchBar";
 import AssignManagerActions from "@/components/AssignManagerActions";
 
-export default function UserDBManagementPage() {
+export default function UserDBCompanyPage() {
   const {
     users,
     totalUsers,
     loading,
     error,
-    fetchUsersDB,
+    fetchUserDBsForMainUser,
     deleteUserDB,
     createUserDB,
     updateUserDB,
@@ -47,7 +47,7 @@ export default function UserDBManagementPage() {
   const totalPages = Math.ceil(totalUsers / limit);
 
   useEffect(() => {
-    fetchUsersDB(limit, offset);
+    fetchUserDBsForMainUser(limit, offset);
   }, [currentPage]);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function UserDBManagementPage() {
       await Promise.all(selectedUsers.map((user) => deleteUserDB(user.id)));
       alert("삭제가 완료되었습니다.");
       setSelectedUsers([]);
-      fetchUsersDB(limit, offset);
+      fetchUserDBsForMainUser(limit, offset);
     } catch (error) {
       alert("삭제 중 오류가 발생했습니다.");
       console.error("삭제 실패:", error);
@@ -128,7 +128,7 @@ export default function UserDBManagementPage() {
       );
       alert("DB 유형 변경이 완료되었습니다.");
       setSelectedUsers([]);
-      fetchUsersDB(limit, offset);
+      fetchUserDBsForMainUser(limit, offset);
     } catch (error) {
       alert("DB 유형 변경 중 오류가 발생했습니다.");
       console.error("DB 유형 변경 실패:", error);
@@ -142,7 +142,7 @@ export default function UserDBManagementPage() {
       );
       alert("담당자 배정이 완료되었습니다.");
       setSelectedUsers([]);
-      fetchUsersDB(limit, offset);
+      fetchUserDBsForMainUser(limit, offset);
     } catch (error) {
       alert("담당자 배정 중 오류가 발생했습니다.");
       console.error("담당자 배정 실패:", error);
@@ -225,7 +225,7 @@ export default function UserDBManagementPage() {
           alert("엑셀 업로드가 완료되었습니다.");
         }
 
-        fetchUsersDB(limit, offset);
+        fetchUserDBsForMainUser(limit, offset);
       };
 
       reader.readAsArrayBuffer(file);
@@ -293,7 +293,7 @@ export default function UserDBManagementPage() {
         >
           {error}
           <Button
-            onClick={() => fetchUsersDB(limit, offset)}
+            onClick={() => fetchUserDBsForMainUser(limit, offset)}
             variant="contained"
             color="error"
             sx={{ mt: 2 }}
@@ -333,7 +333,7 @@ export default function UserDBManagementPage() {
       {showCreateModal && (
         <CreateUserDBModal
           onClose={() => setShowCreateModal(false)}
-          onCreated={() => fetchUsersDB(limit, offset)}
+          onCreated={() => fetchUserDBsForMainUser(limit, offset)}
         />
       )}
     </Box>

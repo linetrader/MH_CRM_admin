@@ -1,3 +1,4 @@
+import React from "react";
 import { Box, Button } from "@mui/material";
 
 interface PaginationProps {
@@ -11,6 +12,22 @@ export default function Pagination({
   currentPage,
   setCurrentPage,
 }: PaginationProps) {
+  const getPagesToShow = () => {
+    const pages = new Set<number>();
+
+    pages.add(1);
+    pages.add(totalPages);
+
+    if (currentPage > 2) pages.add(currentPage - 1);
+    pages.add(currentPage);
+    if (currentPage < totalPages - 1) pages.add(currentPage + 1);
+
+    return Array.from(pages).sort((a, b) => a - b);
+  };
+
+  const pagesToShow = getPagesToShow();
+  let lastPage = 0;
+
   return (
     <Box mt={3} display="flex" justifyContent="center" alignItems="center">
       <Button
@@ -23,9 +40,10 @@ export default function Pagination({
       >
         이전
       </Button>
-      {Array.from({ length: totalPages }, (_, index) => {
-        const page = index + 1;
-        return (
+
+      {pagesToShow.map((page) => {
+        const isEllipsis = page - lastPage > 1;
+        const render = (
           <Button
             key={page}
             variant={currentPage === page ? "contained" : "outlined"}
@@ -44,7 +62,22 @@ export default function Pagination({
             {page}
           </Button>
         );
+        const ellipsis =
+          isEllipsis && lastPage !== 0 ? (
+            <Button key={`ellipsis-${page}`} disabled sx={{ minWidth: 36 }}>
+              ...
+            </Button>
+          ) : null;
+
+        lastPage = page;
+        return (
+          <React.Fragment key={`fragment-${page}`}>
+            {ellipsis}
+            {render}
+          </React.Fragment>
+        );
       })}
+
       <Button
         disabled={currentPage === totalPages}
         onClick={() => setCurrentPage(currentPage + 1)}
