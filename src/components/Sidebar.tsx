@@ -35,19 +35,19 @@ const allMenuItems = [
   {
     label: "전체",
     icon: <Group />,
-    level: 4,
+    level: 3,
     children: [
       {
         label: "영업팀 관리",
         icon: <Group />,
         path: "/dashboard/All/user-management",
-        level: 4,
+        level: 3,
       },
       {
         label: "DB 관리",
         icon: <Group />,
         path: "/dashboard/All/userDB-management",
-        level: 2,
+        level: 3,
       },
     ],
   },

@@ -1,3 +1,5 @@
+// src/app/dashboard/All/userDB-management/page.tsx
+
 "use client";
 
 import {
@@ -40,7 +42,7 @@ export default function UserDBManagementPage() {
   const [newDBType, setNewDBType] = useState("");
   const [managerList, setManagerList] = useState<string[]>([]); // 👈 담당자 리스트
 
-  const limit = 30;
+  const limit = 100;
   const offset = (currentPage - 1) * limit;
   const totalPages = Math.ceil(totalUsers / limit);
 
@@ -194,14 +196,21 @@ export default function UserDBManagementPage() {
         const failed: any[] = [];
 
         for (const row of jsonData) {
-          console.log(row.incomedate, parseExcelDate(row.incomedate));
+          if (!row.phonenumber) continue;
+
+          // ✅ 전화번호 가공
+          let phone = row.phonenumber?.toString().trim() || "";
+          if (phone && !phone.startsWith("010")) {
+            phone = "010" + phone;
+          }
+
           const result = await createUserDB({
             username: row.username || "",
-            phonenumber: row.phonenumber?.toString() || "",
+            phonenumber: phone, // ✅ 수정된 번호 사용
             sex: row.sex || "",
             incomepath: row.incomepath || "",
             creatorname: row.creatorname || "",
-            memo: row.memo || "",
+            memo: String(row.memo || ""),
             type: row.type || "els",
             manager: row.manager || "",
             incomedate: parseExcelDate(row.incomedate) || "",
