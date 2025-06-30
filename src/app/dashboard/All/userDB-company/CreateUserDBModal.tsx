@@ -24,7 +24,7 @@ export default function CreateUserDBModal({
     incomepath: "",
     creatorname: "",
     memo: "",
-    type: "",
+    type: "els",
     manager: "",
     incomedate: "", // ✅ 새 필드 추가
   });

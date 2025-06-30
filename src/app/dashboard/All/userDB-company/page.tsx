@@ -198,15 +198,11 @@ export default function UserDBCompanyPage() {
         for (const row of jsonData) {
           if (!row.phonenumber) continue;
 
-          // ✅ 전화번호 가공
-          let phone = row.phonenumber?.toString().trim() || "";
-          if (phone && !phone.startsWith("010")) {
-            phone = "010" + phone;
-          }
+          const phone = row.phonenumber?.toString().trim() || "";
 
           const result = await createUserDB({
             username: row.username || "",
-            phonenumber: phone, // ✅ 수정된 번호 사용
+            phonenumber: phone, // ✅ 가공 없이 그대로 사용
             sex: row.sex || "",
             incomepath: row.incomepath || "",
             creatorname: row.creatorname || "",
