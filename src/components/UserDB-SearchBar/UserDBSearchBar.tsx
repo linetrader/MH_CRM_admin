@@ -26,13 +26,18 @@ export default function UserDBSearchBar({
         size="small"
         label="필터 기준"
         value={filterType}
-        onChange={(e) => setFilterType(e.target.value)}
+        onChange={(e) => {
+          setFilterType(e.target.value);
+          setSearchKeyword("");
+        }}
         sx={{ width: 140 }}
       >
         <MenuItem value="phonenumber">휴대폰번호</MenuItem>
         <MenuItem value="username">이름</MenuItem>
-        <MenuItem value="manager">담당자</MenuItem>
+        <MenuItem value="incomepath">유입경로</MenuItem>
+        <MenuItem value="creatorname">크리에이터</MenuItem>
         <MenuItem value="type">DB 유형</MenuItem>
+        <MenuItem value="manager">담당자</MenuItem>
       </TextField>
 
       <TextField

@@ -107,6 +107,75 @@ export function useFetchUsersDB() {
     [fetchUserData]
   );
 
+  const searchUserDBsWithOr = useCallback(
+    async (
+      limit = 30,
+      offset = 0,
+      filters: {
+        username?: string;
+        phonenumber?: string;
+        incomepath?: string;
+        creatorname?: string;
+        manager?: string;
+        type?: string;
+      }
+    ) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data, errors } = await graphqlRequest(
+          `
+        query SearchUserDBsUnderMyNetworkWithOr(
+          $limit: Int
+          $offset: Int
+          $username: String
+          $phonenumber: String
+          $incomepath: String
+          $creatorname: String
+          $manager: String
+          $type: String
+        ) {
+          searchUserDBsUnderMyNetworkWithOr(
+            limit: $limit
+            offset: $offset
+            username: $username
+            phonenumber: $phonenumber
+            incomepath: $incomepath
+            creatorname: $creatorname
+            manager: $manager
+            type: $type
+          ) {
+            users {
+              ${USER_FIELDS}
+            }
+            totalUsers
+          }
+        }
+        `,
+          {
+            limit,
+            offset,
+            ...filters, // ✅ 이 부분에서 제대로 전달되도록
+          }
+        );
+
+        if (errors) {
+          setError(errors.map((err: any) => err.message).join(", "));
+          return;
+        }
+
+        setUsers(data.searchUserDBsUnderMyNetworkWithOr.users || []);
+        setTotalUsers(data.searchUserDBsUnderMyNetworkWithOr.totalUsers || 0);
+      } catch (err: any) {
+        setError(err?.message || "검색 중 오류 발생");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [graphqlRequest]
+  );
+
   const createUserDB = useCallback(
     async (newUser: Partial<UserDB>): Promise<UserDB | null> => {
       try {
@@ -247,6 +316,7 @@ export function useFetchUsersDB() {
     fetchUserDBsByMyUsername,
     fetchUserDBsForMainUser,
     fetchUsernamesUnderMyNetwork,
+    searchUserDBsWithOr,
     createUserDB,
     updateUserDB,
     deleteUserDB,

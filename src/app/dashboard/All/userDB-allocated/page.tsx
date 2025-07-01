@@ -12,7 +12,7 @@ import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
 import UserDBTable from "../../userDBTable/UserDBTable";
 import Pagination from "@/components/common/Pagination";
 import UserDBTypeChangeActions from "@/components/UserDBTypeChangeActions";
-import UserDBSearchBar from "@/components/UserDBSearchBar";
+import UserDBSearchBar from "@/components/UserDB-SearchBar/UserDBSearchBar";
 import AssignManagerActions from "@/components/AssignManagerActions";
 
 export default function UserDBAllocatedPage() {
@@ -24,6 +24,7 @@ export default function UserDBAllocatedPage() {
     fetchUserDBsUnderMyNetwork,
     updateUserDB,
     fetchUsernamesUnderMyNetwork,
+    searchUserDBsWithOr,
   } = useFetchUsersDB();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,19 +62,11 @@ export default function UserDBAllocatedPage() {
   }, []);
 
   const handleSearch = () => {
-    const keyword = searchKeyword.trim().toLowerCase();
+    const filters: any = {
+      [filterType]: searchKeyword.trim(),
+    };
 
-    if (!keyword) {
-      setFilteredUsers(users);
-      return;
-    }
-
-    const result = users.filter((user) => {
-      const value = user[filterType as keyof UserDB];
-      return value?.toString().toLowerCase().includes(keyword);
-    });
-
-    setFilteredUsers(result);
+    searchUserDBsWithOr(limit, offset, filters);
     setCurrentPage(1);
   };
 

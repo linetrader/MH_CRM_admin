@@ -17,7 +17,7 @@ import CreateUserDBModal from "./CreateUserDBModal";
 import * as XLSX from "xlsx";
 import UserDBAddActions from "@/components/UserDBAddActions";
 import UserDBTypeChangeActions from "@/components/UserDBTypeChangeActions";
-import UserDBSearchBar from "@/components/UserDBSearchBar";
+import UserDBSearchBar from "@/components/UserDB-SearchBar/UserDBSearchBar";
 import AssignManagerActions from "@/components/AssignManagerActions";
 
 export default function UserDBCompanyPage() {
@@ -31,6 +31,7 @@ export default function UserDBCompanyPage() {
     createUserDB,
     updateUserDB,
     fetchUsernamesUnderMyNetwork,
+    searchUserDBsWithOr,
   } = useFetchUsersDB();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,19 +70,11 @@ export default function UserDBCompanyPage() {
   }, []);
 
   const handleSearch = () => {
-    const keyword = searchKeyword.trim().toLowerCase();
+    const filters: any = {
+      [filterType]: searchKeyword.trim(),
+    };
 
-    if (!keyword) {
-      setFilteredUsers(users);
-      return;
-    }
-
-    const result = users.filter((user) => {
-      const value = user[filterType as keyof UserDB];
-      return value?.toString().toLowerCase().includes(keyword);
-    });
-
-    setFilteredUsers(result);
+    searchUserDBsWithOr(limit, offset, filters);
     setCurrentPage(1);
   };
 
