@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
 import Pagination from "@/components/common/Pagination";
 import UserDBTable from "@/app/dashboard/userDBTable/UserDBTable";
+import UserDBSearchBar from "../UserDB-SearchBar/UserDBSearchBar";
 
 interface Props {
   title: string;
@@ -14,9 +15,18 @@ interface Props {
 }
 
 export default function UserDBListPage({ title, dbType }: Props) {
-  const { users, totalUsers, loading, error, fetchUserDBsUnderMyNetwork } =
-    useFetchUsersDB();
+  const {
+    users,
+    totalUsers,
+    loading,
+    error,
+    fetchUserDBsUnderMyNetwork,
+    searchUserDBsWithOr,
+  } = useFetchUsersDB();
 
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [filterType, setFilterType] = useState("phonenumber");
+  //const [filteredUsers, setFilteredUsers] = useState<UserDB[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const limit = 30;
@@ -27,11 +37,28 @@ export default function UserDBListPage({ title, dbType }: Props) {
     fetchUserDBsUnderMyNetwork(limit, offset, dbType);
   }, [currentPage, dbType]);
 
+  const handleSearch = () => {
+    const filters: any = {
+      [filterType]: searchKeyword.trim(),
+    };
+
+    searchUserDBsWithOr(limit, offset, filters);
+    setCurrentPage(currentPage);
+  };
+
   return (
     <Box sx={{ backgroundColor: "#fafafa", minHeight: "100vh", p: 3 }}>
       <Typography variant="h4" gutterBottom>
         {title}
       </Typography>
+
+      <UserDBSearchBar
+        filterType={filterType}
+        setFilterType={setFilterType}
+        searchKeyword={searchKeyword}
+        setSearchKeyword={setSearchKeyword}
+        onSearch={handleSearch}
+      />
 
       {loading && (
         <Box display="flex" justifyContent="center" mt={3}>

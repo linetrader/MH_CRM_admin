@@ -75,7 +75,7 @@ export default function UserDBCompanyPage() {
     };
 
     searchUserDBsWithOr(limit, offset, filters);
-    setCurrentPage(1);
+    setCurrentPage(currentPage);
   };
 
   const handleDeleteSelected = async () => {

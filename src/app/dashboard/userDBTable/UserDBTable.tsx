@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import DataTable from "@/components/common/DataTable";
 import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
 import EditUserDBModal from "./EditUserDBModal";
+import MemoModal from "@/components/common/MemoModal";
 
 interface Props {
   users: UserDB[];
@@ -22,6 +23,9 @@ export default function UserDBTable({
 
   const [selectedRows, setSelectedRows] = useState<UserDB[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserDB | null>(null);
+
+  // 모달 관리용 상태 추가
+  const [memoUser, setMemoUser] = useState<UserDB | null>(null);
 
   useEffect(() => {
     onSelectedUsersChange(selectedRows);
@@ -45,6 +49,29 @@ export default function UserDBTable({
       console.error("Error updating user:", error);
     } finally {
       setSelectedUser(null);
+    }
+  };
+
+  const handleMemoClick = (user: UserDB) => {
+    setMemoUser(user);
+  };
+
+  const handleCloseMemoModal = () => {
+    setMemoUser(null);
+  };
+
+  const handleSaveMemo = async (updatedMemo: string) => {
+    if (!memoUser) return;
+    try {
+      const updatedUser = { ...memoUser, memo: updatedMemo };
+      const isUpdated = await updateUserDB(updatedUser.id, updatedUser);
+      if (isUpdated) {
+        alert("메모 업데이트 완료");
+      }
+    } catch (error) {
+      console.error("Error updating memo:", error);
+    } finally {
+      setMemoUser(null);
     }
   };
 
@@ -72,7 +99,22 @@ export default function UserDBTable({
     { key: "sex", label: "성별" },
     { key: "incomepath", label: "유입 경로" },
     { key: "creatorname", label: "크리에이터" },
-    { key: "memo", label: "상담 기록" },
+    {
+      key: "memo",
+      label: "상담 기록",
+      format: (value, row) =>
+        value && typeof value === "string" ? (
+          <span
+            style={{ cursor: "pointer", color: "#1976d2" }}
+            onClick={() => handleMemoClick(row!)}
+            title="클릭하여 전체 내용 보기"
+          >
+            {value.length > 20 ? `${value.slice(0, 20)}...` : value}
+          </span>
+        ) : (
+          ""
+        ),
+    },
     { key: "type", label: "DB 유형" },
     { key: "manager", label: "담당자" },
     { key: "incomedate", label: "유입 날짜" },
@@ -105,6 +147,14 @@ export default function UserDBTable({
         onSelectAll={handleSelectAll}
         onSelectRow={handleSelectRow}
       />
+
+      {memoUser && (
+        <MemoModal
+          user={memoUser}
+          onClose={handleCloseMemoModal}
+          onSave={handleSaveMemo}
+        />
+      )}
 
       {selectedUser && (
         <EditUserDBModal
