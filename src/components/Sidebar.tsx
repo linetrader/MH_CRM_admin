@@ -5,13 +5,7 @@ import {
   Dashboard,
   Logout,
   Group,
-  Wallet,
-  Store,
   Storage,
-  EmojiEvents,
-  ShoppingCart,
-  AttachMoney,
-  SupervisedUserCircle,
   ExpandLess,
   ExpandMore,
 } from "@mui/icons-material";
@@ -31,7 +25,7 @@ import { useAuth } from "@/context/AuthContext";
 const drawerWidth = 240;
 
 const allMenuItems = [
-  { label: "Dashboard", icon: <Dashboard />, path: "/dashboard", level: 3 },
+  { label: "Dashboard", icon: <Dashboard />, path: "/dashboard", level: 5 },
   {
     label: "전체",
     icon: <Group />,
@@ -163,6 +157,12 @@ const allMenuItems = [
         level: 5,
       },
     ],
+  },
+  {
+    label: "기타 DB",
+    icon: <Storage />,
+    path: "/dashboard/els",
+    level: 5,
   },
 ];
 
