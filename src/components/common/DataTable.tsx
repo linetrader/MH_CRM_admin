@@ -1,3 +1,5 @@
+// src/components/common/DataTable.tsx
+
 import {
   Table,
   TableBody,
@@ -13,6 +15,7 @@ interface ColumnDefinition<T> {
   label: string;
   format?: (value: T[keyof T] | undefined, row?: T) => string | JSX.Element;
   isAction?: boolean;
+  userLevel?: number; // 추가: 사용자 레벨에 따라 표시 여부 결정
 }
 
 interface DataTableProps<T> {

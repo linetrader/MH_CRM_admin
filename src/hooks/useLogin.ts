@@ -17,7 +17,7 @@ export function useLogin() {
         const isLevel = await fetchUserInfo(); // 토큰이 준비되면 fetchUserInfo 호출
         //console.log("isLevel", isLevel);
         if (isLevel < 5) {
-          router.push("/dashboard");
+          //router.push("/dashboard");
         } else {
           router.push("/login");
         }

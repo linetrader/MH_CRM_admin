@@ -7,10 +7,11 @@ import DataTable from "@/components/common/DataTable";
 import { useFetchUsersDB } from "@/hooks/useFetchUsersDB";
 import EditUserDBModal from "./EditUserDBModal";
 import MemoModal from "@/components/common/MemoModal";
+import { useLogin } from "@/hooks/useLogin";
 
 interface Props {
   users: UserDB[];
-  dbType: string; // ✅ 추가
+  dbType: string;
   onSelectedUsersChange: (selected: UserDB[]) => void;
 }
 
@@ -20,31 +21,23 @@ export default function UserDBTable({
   onSelectedUsersChange,
 }: Props) {
   const { updateUserDB } = useFetchUsersDB();
+  const { userLevel } = useLogin();
 
   const [selectedRows, setSelectedRows] = useState<UserDB[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserDB | null>(null);
-
-  // 모달 관리용 상태 추가
   const [memoUser, setMemoUser] = useState<UserDB | null>(null);
 
   useEffect(() => {
     onSelectedUsersChange(selectedRows);
   }, [selectedRows, onSelectedUsersChange]);
 
-  const handleEdit = (user: UserDB) => {
-    setSelectedUser(user);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedUser(null);
-  };
+  const handleEdit = (user: UserDB) => setSelectedUser(user);
+  const handleCloseModal = () => setSelectedUser(null);
 
   const handleSaveUser = async (updatedUser: UserDB) => {
     try {
       const isUpdated = await updateUserDB(updatedUser.id, updatedUser);
-      if (isUpdated) {
-        alert("업데이트 완료");
-      }
+      if (isUpdated) alert("업데이트 완료");
     } catch (error) {
       console.error("Error updating user:", error);
     } finally {
@@ -52,22 +45,15 @@ export default function UserDBTable({
     }
   };
 
-  const handleMemoClick = (user: UserDB) => {
-    setMemoUser(user);
-  };
-
-  const handleCloseMemoModal = () => {
-    setMemoUser(null);
-  };
+  const handleMemoClick = (user: UserDB) => setMemoUser(user);
+  const handleCloseMemoModal = () => setMemoUser(null);
 
   const handleSaveMemo = async (updatedMemo: string) => {
     if (!memoUser) return;
     try {
       const updatedUser = { ...memoUser, memo: updatedMemo };
       const isUpdated = await updateUserDB(updatedUser.id, updatedUser);
-      if (isUpdated) {
-        alert("메모 업데이트 완료");
-      }
+      if (isUpdated) alert("메모 업데이트 완료");
     } catch (error) {
       console.error("Error updating memo:", error);
     } finally {
@@ -75,17 +61,15 @@ export default function UserDBTable({
     }
   };
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = (checked: boolean) =>
     setSelectedRows(checked ? [...users] : []);
-  };
 
-  const handleSelectRow = (checked: boolean, user: UserDB) => {
+  const handleSelectRow = (checked: boolean, user: UserDB) =>
     setSelectedRows((prev) =>
       checked ? [...prev, user] : prev.filter((u) => u.id !== user.id)
     );
-  };
 
-  const columns: Array<{
+  const allColumns: Array<{
     key: keyof UserDB | "actions";
     label: string;
     format?: (
@@ -93,6 +77,7 @@ export default function UserDBTable({
       row?: UserDB
     ) => string | JSX.Element;
     isAction?: boolean;
+    userLevel?: number;
   }> = [
     { key: "username", label: "이름" },
     { key: "phonenumber", label: "휴대폰 번호" },
@@ -134,15 +119,24 @@ export default function UserDBTable({
       key: "actions",
       label: "Actions",
       isAction: true,
+      userLevel: 1, // 관리자만 수정 가능
     },
   ];
+
+  const getVisibleColumns = () =>
+    allColumns.filter(
+      (col) =>
+        !col.userLevel || (userLevel !== null && userLevel <= col.userLevel)
+    );
 
   return (
     <>
       <DataTable
         data={users}
-        columns={columns}
-        onAction={handleEdit}
+        columns={getVisibleColumns()}
+        onAction={
+          userLevel !== null && userLevel === 1 ? handleEdit : undefined
+        }
         selectedRows={selectedRows}
         onSelectAll={handleSelectAll}
         onSelectRow={handleSelectRow}
@@ -159,7 +153,6 @@ export default function UserDBTable({
       {selectedUser && (
         <EditUserDBModal
           user={selectedUser}
-          //dbType={dbType} // ✅ 전달
           onClose={handleCloseModal}
           onSave={handleSaveUser}
         />

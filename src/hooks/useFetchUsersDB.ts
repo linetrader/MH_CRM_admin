@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useGraphQL } from "@/utils/graphqlApi";
+import { Print } from "@mui/icons-material";
 
 const USER_FIELDS = `
   id
@@ -29,18 +30,24 @@ export function useFetchUsersDB() {
     async (queryName: string, queryArgs: string, variables: any) => {
       setLoading(true);
       setError(null);
+
       try {
         const { data, errors } = await graphqlRequest(
           `
-          query ${queryName}($limit: Int, $offset: Int, $type: String) {
-            ${queryName}(limit: $limit, offset: $offset, type: $type) {
-              users {
-                ${USER_FIELDS}
-              }
-              totalUsers
+        query ${queryName}(${queryArgs}) {
+          ${queryName}(
+            limit: $limit,
+            offset: $offset,
+            includeSelf: $includeSelf,
+            type: $type
+          ) {
+            users {
+              ${USER_FIELDS}
             }
+            totalUsers
           }
-          `,
+        }
+        `,
           variables
         );
 
@@ -63,13 +70,14 @@ export function useFetchUsersDB() {
   );
 
   const fetchUserDBsForMainUser = useCallback(
-    (limit = 30, offset = 0, type?: string) => {
+    (limit = 30, offset = 0, includeSelf = true, type?: string) => {
       return fetchUserData(
         "getUserDBsForMainUser",
-        "$limit: Int, $offset: Int, $type: String",
+        "$limit: Int, $offset: Int, $includeSelf: Boolean, $type: String",
         {
           limit,
           offset,
+          includeSelf,
           type,
         }
       );
@@ -78,13 +86,14 @@ export function useFetchUsersDB() {
   );
 
   const fetchUserDBsByMyUsername = useCallback(
-    (limit = 30, offset = 0, type?: string) => {
+    (limit = 30, offset = 0, includeSelf = true, type?: string) => {
       return fetchUserData(
         "getUserDBsByMyUsername",
-        "$limit: Int, $offset: Int, $type: String",
+        "$limit: Int, $offset: Int, $includeSelf: Boolean, $type: String",
         {
           limit,
           offset,
+          includeSelf,
           type,
         }
       );
@@ -93,13 +102,14 @@ export function useFetchUsersDB() {
   );
 
   const fetchUserDBsUnderMyNetwork = useCallback(
-    (limit = 30, offset = 0, type?: string) => {
+    (limit = 30, offset = 0, includeSelf = true, type?: string) => {
       return fetchUserData(
         "getUserDBsUnderMyNetwork",
-        "$limit: Int, $offset: Int, $type: String",
+        "$limit: Int, $offset: Int, $includeSelf: Boolean, $type: String",
         {
           limit,
           offset,
+          includeSelf,
           type,
         }
       );

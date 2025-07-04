@@ -1,3 +1,5 @@
+// src/components/common/Pagination.tsx
+
 import React from "react";
 import { Box, Button } from "@mui/material";
 

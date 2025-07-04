@@ -40,7 +40,7 @@ export default function UserDBAllocatedPage() {
   const totalPages = Math.ceil(totalUsers / limit);
 
   useEffect(() => {
-    fetchUserDBsUnderMyNetwork(limit, offset);
+    fetchUserDBsUnderMyNetwork(limit, offset, false);
   }, [currentPage]);
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export default function UserDBAllocatedPage() {
       );
       alert("DB 유형 변경이 완료되었습니다.");
       setSelectedUsers([]);
-      fetchUserDBsUnderMyNetwork(limit, offset);
+      fetchUserDBsUnderMyNetwork(limit, offset, false);
     } catch (error) {
       alert("DB 유형 변경 중 오류가 발생했습니다.");
       console.error("DB 유형 변경 실패:", error);
@@ -107,7 +107,7 @@ export default function UserDBAllocatedPage() {
       );
       alert("담당자 배정이 완료되었습니다.");
       setSelectedUsers([]);
-      fetchUserDBsUnderMyNetwork(limit, offset);
+      fetchUserDBsUnderMyNetwork(limit, offset, false);
     } catch (error) {
       alert("담당자 배정 중 오류가 발생했습니다.");
       console.error("담당자 배정 실패:", error);
@@ -154,7 +154,7 @@ export default function UserDBAllocatedPage() {
         >
           {error}
           <Button
-            onClick={() => fetchUserDBsUnderMyNetwork(limit, offset)}
+            onClick={() => fetchUserDBsUnderMyNetwork(limit, offset, false)}
             variant="contained"
             color="error"
             sx={{ mt: 2 }}
