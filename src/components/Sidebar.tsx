@@ -29,13 +29,13 @@ const allMenuItems = [
   {
     label: "전체",
     icon: <Group />,
-    level: 3,
+    level: 4,
     children: [
       {
         label: "영업팀 관리",
         icon: <Group />,
         path: "/dashboard/All/user-management",
-        level: 3,
+        level: 4,
       },
       {
         label: "본사 DB 관리",

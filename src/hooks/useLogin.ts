@@ -15,8 +15,8 @@ export function useLogin() {
     const fetchData = async () => {
       if (isAuthenticated) {
         const isLevel = await fetchUserInfo(); // 토큰이 준비되면 fetchUserInfo 호출
-        //console.log("isLevel", isLevel);
-        if (isLevel < 5) {
+        console.log("isLevel", isLevel);
+        if (isLevel < 6) {
           //router.push("/dashboard");
         } else {
           router.push("/login");
@@ -104,7 +104,7 @@ export function useLogin() {
       }
     } catch (err: any) {
       setError(err.message || "Failed to fetch user info.");
-      setUserLevel(7); // 기본값 설정
+      setUserLevel(5); // 기본값 설정
       logout(); // 사용자 정보 가져오기 실패 시 로그아웃
     }
 

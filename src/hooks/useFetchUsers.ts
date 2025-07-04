@@ -53,7 +53,7 @@ export function useFetchUsers() {
         }
 
         // register 리턴값이 token이라면, 유저 정보는 직접 fetchUsers에서 다시 불러오는 게 안전함
-        console.log("User registered successfully:", data?.register);
+        //console.log("User registered successfully:", data?.register);
 
         return {
           id: "", // ID는 없음. 필요 시 fetchUsers로 다시 불러와야 함
@@ -63,7 +63,7 @@ export function useFetchUsers() {
           lastname: newUser.lastname!,
           referrer: newUser.referrer || "",
           status: "inactive", // 기본값 또는 필요에 따라 수정
-          userLevel: String(7),
+          userLevel: String(5),
           createdAt: new Date().toISOString(),
         } as User;
       } catch (error: any) {

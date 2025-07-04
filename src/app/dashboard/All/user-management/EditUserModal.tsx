@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { User } from "@/types/User";
 import EditableFields from "@/components/common/EditableFields";
+import { useLogin } from "@/hooks/useLogin";
 
 interface EditUserModalProps {
   user: User;
@@ -16,6 +17,8 @@ export default function EditUserModal({
   onSave,
 }: EditUserModalProps) {
   const [formData, setFormData] = useState<User>(user);
+  const [error, setError] = useState<string | null>(null);
+  const { userLevel } = useLogin();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,7 +29,14 @@ export default function EditUserModal({
   };
 
   const handleSave = () => {
-    onSave(formData);
+    setError(null);
+    console.log("Saving user:", formData.userLevel);
+    if (userLevel !== null && Number(formData.userLevel) < userLevel) {
+      alert("자신보다 높은 권한으로 수정할 수 없습니다.");
+      onClose();
+    } else {
+      onSave(formData);
+    }
   };
 
   const fields: Array<{ label: string; name: keyof User }> = [
