@@ -7,6 +7,7 @@ export default function UserDBCompanyPage() {
     <UserDBListPage
       title="전체 회사 DB 관리"
       dbType="company" // 필요 시 사용되는 DB 유형
+      pageType="company" // 페이지 타입을 명시적으로 전달
     />
   );
 }

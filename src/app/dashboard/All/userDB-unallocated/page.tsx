@@ -7,6 +7,7 @@ export default function UserDBUnAllocatedPage() {
     <UserDBListPage
       title="미배분 DB 관리"
       dbType="unallocated" // 필요 시 사용되는 DB 유형
+      pageType="unallocated" // 페이지 타입을 명시적으로 전달
     />
   );
 }

@@ -21,9 +21,10 @@ import AssignManagerActions from "./components/AssignManagerActions";
 interface Props {
   title: string;
   dbType: string;
+  pageType?: string; // 페이지 타입은 선택적
 }
 
-export default function UserDBListPage({ title, dbType }: Props) {
+export default function UserDBListPage({ title, dbType, pageType }: Props) {
   const {
     users,
     totalUsers,
@@ -58,14 +59,12 @@ export default function UserDBListPage({ title, dbType }: Props) {
       };
       searchUserDBsWithOr(limit, offset, filters);
     } else {
-      if (dbType === "company") {
+      if (pageType === "company") {
         fetchUserDBsForMainUser(limit, offset);
-      } else if (dbType === "unallocated") {
-        dbType = "";
-        fetchUserDBsByMyUsername(limit, offset, true, dbType);
-      } else if (dbType === "allocated") {
-        dbType = "";
-        fetchUserDBsUnderMyNetwork(limit, offset, false, dbType);
+      } else if (pageType === "unallocated") {
+        fetchUserDBsByMyUsername(limit, offset, true);
+      } else if (pageType === "allocated") {
+        fetchUserDBsUnderMyNetwork(limit, offset, false);
       } else {
         console.log("알 수 없는 DB 타입:", dbType);
         fetchUserDBsUnderMyNetwork(limit, offset, true, dbType);
@@ -83,7 +82,7 @@ export default function UserDBListPage({ title, dbType }: Props) {
         ignore = true;
       };
     }
-  }, [currentPage, dbType, isSearching]);
+  }, [currentPage, isSearching]);
 
   const handleSearch = () => {
     const filters: any = {
@@ -98,14 +97,12 @@ export default function UserDBListPage({ title, dbType }: Props) {
   };
 
   const handleCreateDB = async () => {
-    if (dbType === "company") {
+    if (pageType === "company") {
       fetchUserDBsForMainUser(limit, offset);
-    } else if (dbType === "unallocated") {
-      dbType = "";
-      fetchUserDBsByMyUsername(limit, offset, true, dbType);
-    } else if (dbType === "allocated") {
-      dbType = "";
-      fetchUserDBsUnderMyNetwork(limit, offset, false, dbType);
+    } else if (pageType === "unallocated") {
+      fetchUserDBsByMyUsername(limit, offset, true);
+    } else if (pageType === "allocated") {
+      fetchUserDBsUnderMyNetwork(limit, offset, false);
     }
   };
 
@@ -130,12 +127,13 @@ export default function UserDBListPage({ title, dbType }: Props) {
   };
 
   const handleMemoUpdated = () => {
-    if (dbType === "company") {
+    console.log("Memo updated, refreshing user list...");
+    if (pageType === "company") {
       fetchUserDBsForMainUser(limit, offset);
-    } else if (dbType === "unallocated") {
-      fetchUserDBsByMyUsername(limit, offset, true, "");
-    } else if (dbType === "allocated") {
-      fetchUserDBsUnderMyNetwork(limit, offset, false, "");
+    } else if (pageType === "unallocated") {
+      fetchUserDBsByMyUsername(limit, offset, true);
+    } else if (pageType === "allocated") {
+      fetchUserDBsUnderMyNetwork(limit, offset, false);
     } else {
       fetchUserDBsUnderMyNetwork(limit, offset, true, dbType);
     }
@@ -179,7 +177,7 @@ export default function UserDBListPage({ title, dbType }: Props) {
         onSearch={handleSearch}
       />
 
-      {dbType === "company" && (
+      {pageType === "company" && (
         <UserDBAddActions
           onOpenCreateModal={() => setShowCreateModal(true)}
           onDeleteSelected={handleDeleteSelected}
@@ -188,9 +186,9 @@ export default function UserDBListPage({ title, dbType }: Props) {
         />
       )}
 
-      {(dbType === "unallocated" ||
-        dbType === "allocated" ||
-        dbType === "company") &&
+      {(pageType === "unallocated" ||
+        pageType === "allocated" ||
+        pageType === "company") &&
         managerList.length > 0 && (
           <AssignManagerActions
             managers={managerList}
