@@ -1,4 +1,4 @@
-// src/app/dashboard/userDBTable/EditUserDBModal.tsx
+// src/components/userDBTable/EditUserDBModal.tsx
 
 import { useState } from "react";
 import EditableFields from "@/components/common/EditableFields";

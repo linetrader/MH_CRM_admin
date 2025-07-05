@@ -1,4 +1,4 @@
-// src/app/dashboard/userDBTable/UserDBTable.tsx
+// src/components/userDBTable/UserDBTable.tsx
 
 "use client";
 
@@ -11,14 +11,14 @@ import { useLogin } from "@/hooks/useLogin";
 
 interface Props {
   users: UserDB[];
-  dbType: string;
   onSelectedUsersChange: (selected: UserDB[]) => void;
+  onMemoUpdated?: () => void; // ✅ 콜백 props
 }
 
 export default function UserDBTable({
   users,
-  dbType,
   onSelectedUsersChange,
+  onMemoUpdated, // ✅ 받아오기
 }: Props) {
   const { updateUserDB } = useFetchUsersDB();
   const { userLevel } = useLogin();
@@ -53,7 +53,10 @@ export default function UserDBTable({
     try {
       const updatedUser = { ...memoUser, memo: updatedMemo };
       const isUpdated = await updateUserDB(updatedUser.id, updatedUser);
-      if (isUpdated) alert("메모 업데이트 완료");
+      if (isUpdated) {
+        alert("메모 업데이트 완료");
+        if (onMemoUpdated) onMemoUpdated(); // ✅ 외부 콜백 실행
+      }
     } catch (error) {
       console.error("Error updating memo:", error);
     } finally {
@@ -119,7 +122,7 @@ export default function UserDBTable({
       key: "actions",
       label: "Actions",
       isAction: true,
-      userLevel: 1, // 관리자만 수정 가능
+      userLevel: 1,
     },
   ];
 

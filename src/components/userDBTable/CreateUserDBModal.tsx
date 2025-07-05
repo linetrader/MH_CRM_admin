@@ -1,4 +1,4 @@
-// src/app/dashboard/All/userDB-management/CreateUserDBModal.tsx
+// src/components/userDBTable/CreateUserDBModal.tsx
 
 import { useState } from "react";
 import { Box, Typography } from "@mui/material";

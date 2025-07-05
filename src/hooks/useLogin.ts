@@ -15,7 +15,7 @@ export function useLogin() {
     const fetchData = async () => {
       if (isAuthenticated) {
         const isLevel = await fetchUserInfo(); // 토큰이 준비되면 fetchUserInfo 호출
-        console.log("isLevel", isLevel);
+        //console.log("isLevel", isLevel);
         if (isLevel < 6) {
           //router.push("/dashboard");
         } else {
@@ -95,11 +95,11 @@ export function useLogin() {
 
       // userLevel 확인
       if (userInfo.getUserInfo.userLevel) {
-        console.log("Login successful");
+        //console.log("Login successful");
         //router.push("/dashboard");
         return userInfo.getUserInfo.userLevel;
       } else {
-        setUserLevel(7); // 기본값 설정
+        setUserLevel(5); // 기본값 설정
         throw new Error("Your account does not have sufficient privileges.");
       }
     } catch (err: any) {
