@@ -66,7 +66,7 @@ export default function UserDBListPage({ title, dbType, pageType }: Props) {
       } else if (pageType === "allocated") {
         fetchUserDBsUnderMyNetwork(limit, offset, false);
       } else {
-        console.log("알 수 없는 DB 타입:", dbType);
+        //console.log("알 수 없는 DB 타입:", dbType);
         fetchUserDBsUnderMyNetwork(limit, offset, true, dbType);
       }
 
