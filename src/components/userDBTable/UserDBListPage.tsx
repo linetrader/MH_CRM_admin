@@ -48,7 +48,7 @@ export default function UserDBListPage({ title, dbType, pageType }: Props) {
   const [isSearching, setIsSearching] = useState(false);
   const [managerList, setManagerList] = useState<string[]>([]); // 👈 담당자 리스트
 
-  const limit = 30;
+  const limit = 100;
   const offset = (currentPage - 1) * limit;
   const totalPages = Math.ceil(totalUsers / limit);
 
