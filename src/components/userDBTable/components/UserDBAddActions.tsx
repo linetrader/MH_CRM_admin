@@ -61,7 +61,7 @@ export default function UserDBAddActions({
           const result = await createUserDB({
             username: row.username || "",
             phonenumber: phone,
-            sex: row.sex || "",
+            sms: row.sms || "",
             incomepath: row.incomepath || "",
             creatorname: row.creatorname || "",
             memo: String(row.memo || ""),
