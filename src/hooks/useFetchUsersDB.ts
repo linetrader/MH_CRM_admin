@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { useGraphQL } from "@/utils/graphqlApi";
-import { Print } from "@mui/icons-material";
 
 const USER_FIELDS = `
   id
@@ -223,7 +222,7 @@ export function useFetchUsersDB() {
           $id: String!
           $username: String
           $phonenumber: String
-          $sex: String
+          $sms: String
           $incomepath: String
           $memo: String
           $type: String
@@ -233,7 +232,7 @@ export function useFetchUsersDB() {
             id: $id
             username: $username
             phonenumber: $phonenumber
-            sex: $sex
+            sms: $sms
             incomepath: $incomepath
             memo: $memo
             type: $type
@@ -242,7 +241,7 @@ export function useFetchUsersDB() {
             id
             username
             phonenumber
-            sex
+            sms
             incomepath
             memo
             type
