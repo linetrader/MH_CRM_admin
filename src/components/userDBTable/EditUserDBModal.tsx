@@ -31,7 +31,7 @@ export default function EditUserDBModal({
   const fields: Array<{ label: string; name: keyof UserDB }> = [
     { label: "Username", name: "username" },
     { label: "Phone Number", name: "phonenumber" },
-    { label: "Sex", name: "sex" },
+    { label: "SMS", name: "sms" },
     { label: "Income Path", name: "incomepath" },
     { label: "Memo", name: "memo" },
     { label: "Type", name: "type" },
