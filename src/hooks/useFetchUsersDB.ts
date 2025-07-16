@@ -8,7 +8,7 @@ const USER_FIELDS = `
   id
   username
   phonenumber
-  sex
+  sms
   incomepath
   creatorname
   memo

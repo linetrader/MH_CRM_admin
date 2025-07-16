@@ -1,4 +1,3 @@
-// components/MemoModal.tsx
 "use client";
 
 import {
@@ -14,19 +13,33 @@ import { useState } from "react";
 interface MemoModalProps {
   user: UserDB;
   onClose: () => void;
-  onSave: (memo: string) => void;
+  onSave?: (memo: string) => void;
+  readonly?: boolean;
 }
 
-export default function MemoModal({ user, onClose, onSave }: MemoModalProps) {
-  const [memo, setMemo] = useState(user.memo || "");
+export default function MemoModal({
+  user,
+  onClose,
+  onSave,
+  readonly = false,
+}: MemoModalProps) {
+  const initialValue = readonly
+    ? user.sms || "" // ✅ 문자 보기 모드일 때는 sms만 표시
+    : user.memo || ""; // ✅ 메모 수정 모드일 때는 memo만 표시
+
+  const [memo, setMemo] = useState(initialValue);
 
   const handleSave = () => {
-    onSave(memo);
+    if (onSave) onSave(memo);
   };
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>상담 기록 수정 - {user.username}</DialogTitle>
+      <DialogTitle>
+        {readonly
+          ? `문자 내용 보기 - ${user.username}`
+          : `상담 기록 수정 - ${user.username}`}
+      </DialogTitle>
       <DialogContent>
         <TextField
           multiline
@@ -37,10 +50,12 @@ export default function MemoModal({ user, onClose, onSave }: MemoModalProps) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>취소</Button>
-        <Button variant="contained" onClick={handleSave}>
-          저장
-        </Button>
+        <Button onClick={onClose}>닫기</Button>
+        {!readonly && onSave && (
+          <Button variant="contained" onClick={handleSave}>
+            저장
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

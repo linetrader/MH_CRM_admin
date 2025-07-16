@@ -2,7 +2,7 @@ interface UserDB {
   id: string;
   username: string;
   phonenumber: string;
-  sex: string;
+  sms: string;
   incomepath: string;
   creatorname: string;
   memo: string;

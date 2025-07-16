@@ -25,6 +25,7 @@ export default function UserDBTable({
 
   const [selectedRows, setSelectedRows] = useState<UserDB[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserDB | null>(null);
+  const [smsUser, setSmsUser] = useState<UserDB | null>(null);
   const [memoUser, setMemoUser] = useState<UserDB | null>(null);
 
   useEffect(() => {
@@ -44,6 +45,9 @@ export default function UserDBTable({
       setSelectedUser(null);
     }
   };
+
+  const handleSmsClick = (user: UserDB) => setSmsUser(user);
+  const handleCloseSmsModal = () => setSmsUser(null);
 
   const handleMemoClick = (user: UserDB) => setMemoUser(user);
   const handleCloseMemoModal = () => setMemoUser(null);
@@ -84,7 +88,22 @@ export default function UserDBTable({
   }> = [
     { key: "username", label: "이름" },
     { key: "phonenumber", label: "휴대폰 번호" },
-    { key: "sex", label: "성별" },
+    {
+      key: "sms",
+      label: "문자",
+      format: (value, row) =>
+        value && typeof value === "string" ? (
+          <span
+            style={{ cursor: "pointer", color: "#1976d2" }}
+            onClick={() => handleSmsClick(row!)}
+            title="클릭하여 전체 내용 보기"
+          >
+            {value.length > 5 ? `${value.slice(0, 5)}...` : value}
+          </span>
+        ) : (
+          ""
+        ),
+    },
     { key: "incomepath", label: "유입 경로" },
     { key: "creatorname", label: "크리에이터" },
     {
@@ -144,6 +163,14 @@ export default function UserDBTable({
         onSelectAll={handleSelectAll}
         onSelectRow={handleSelectRow}
       />
+
+      {smsUser && (
+        <MemoModal
+          user={smsUser}
+          onClose={handleCloseSmsModal}
+          readonly={true}
+        />
+      )}
 
       {memoUser && (
         <MemoModal

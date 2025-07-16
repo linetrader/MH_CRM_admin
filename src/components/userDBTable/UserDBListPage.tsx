@@ -17,6 +17,7 @@ import UserDBSearchBar from "./components/UserDBSearchBar";
 import UserDBAddActions from "./components/UserDBAddActions";
 import CreateUserDBModal from "./CreateUserDBModal";
 import AssignManagerActions from "./components/AssignManagerActions";
+import AssignDBTypeActions from "./components/AssignDBTypeActions";
 
 interface Props {
   title: string;
@@ -196,6 +197,24 @@ export default function UserDBListPage({ title, dbType, pageType }: Props) {
             onAssignManager={handleAssignManager}
           />
         )}
+
+      <AssignDBTypeActions
+        selectedUsers={selectedUsers}
+        onAssignDBType={async (newDbType) => {
+          try {
+            await Promise.all(
+              selectedUsers.map((user) =>
+                updateUserDB(user.id, { ...user, type: newDbType })
+              )
+            );
+            alert("DB 유형 이동 완료");
+            handleMemoUpdated();
+          } catch (error) {
+            console.error("DB 유형 이동 실패:", error);
+            alert("DB 유형 이동 중 오류 발생");
+          }
+        }}
+      />
 
       {showCreateModal && (
         <CreateUserDBModal
