@@ -20,7 +20,7 @@ export default function CreateUserDBModal({
     id: "",
     username: "",
     phonenumber: "",
-    sex: "",
+    sms: "",
     incomepath: "",
     creatorname: "",
     memo: "",
@@ -61,7 +61,7 @@ export default function CreateUserDBModal({
   const fields: Array<{ label: string; name: keyof typeof formData }> = [
     { label: "이름", name: "username" },
     { label: "폰 번호", name: "phonenumber" },
-    { label: "성별", name: "sex" },
+    { label: "문자", name: "sms" },
     { label: "유입 경로", name: "incomepath" },
     { label: "크리에이터", name: "creatorname" },
     { label: "상담 기록", name: "memo" },
