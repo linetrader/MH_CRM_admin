@@ -122,7 +122,27 @@ export default function UserDBTable({
           ""
         ),
     },
-    { key: "type", label: "DB 유형" },
+    {
+      key: "type",
+      label: "DB 유형",
+      format: (value) => {
+        const typeMap: Record<string, string> = {
+          els: "기타 DB",
+          stock_new: "신규 DB(주식)",
+          stock_old: "구 DB(주식)",
+          coin_new: "신규 DB(코인)",
+          coin_old: "구 DB(코인)",
+          potential: "가망 DB",
+          customer_fund1: "펀드1 (도지 채굴기)",
+          customer_fund2: "펀드2 (데이터 센터)",
+          customer_fund3: "펀드3 (VAST)",
+          black_longterm: "부재",
+          black_notIdentity: "단선",
+          black_wrongnumber: "결번",
+        };
+        return typeMap[String(value)] ?? String(value);
+      },
+    },
     { key: "manager", label: "담당자" },
     { key: "incomedate", label: "유입 날짜" },
     {

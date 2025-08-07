@@ -46,6 +46,7 @@ export default function DataTable<T extends { id: number | string }>({
         "& .MuiTableCell-root": {
           color: "#333",
           py: 0.5, // ✅ 각 셀의 상하 padding을 줄임
+          fontSize: "0.75rem", // ✅ 폰트 크기를 작게
         },
         "& .MuiTableRow-root:nth-of-type(even)": {
           backgroundColor: "#f9f9f9",
