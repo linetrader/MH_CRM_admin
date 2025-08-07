@@ -114,19 +114,19 @@ const allMenuItems = [
     level: 5,
     children: [
       {
-        label: "도지 채굴기 DB",
+        label: "펀드1 (도지 채굴기)",
         icon: <Storage />,
         path: "/dashboard/customer/fund1",
         level: 5,
       },
       {
-        label: "데이터 센터 DB",
+        label: "펀드2 (데이터 센터)",
         icon: <Storage />,
         path: "/dashboard/customer/fund2",
         level: 5,
       },
       {
-        label: "VAST 코인 DB",
+        label: "펀드3 (VAST)",
         icon: <Storage />,
         path: "/dashboard/customer/fund3",
         level: 5,
@@ -139,13 +139,13 @@ const allMenuItems = [
     level: 5,
     children: [
       {
-        label: "장기 부재",
+        label: "부재",
         icon: <Storage />,
         path: "/dashboard/black/longterm",
         level: 5,
       },
       {
-        label: "본인 아님",
+        label: "단선",
         icon: <Storage />,
         path: "/dashboard/black/notIdentity",
         level: 5,

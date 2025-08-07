@@ -16,18 +16,18 @@ interface Props {
 }
 
 const DB_TYPES = [
-  { value: "els", label: "ELS" },
-  { value: "stock_new", label: "주식(신규)" },
-  { value: "stock_old", label: "주식(구)" },
-  { value: "coin_new", label: "코인(신규)" },
-  { value: "coin_old", label: "코인(구)" },
-  { value: "potential", label: "가망 고객" },
-  { value: "customer_fund1", label: "펀드 고객1" },
-  { value: "customer_fund2", label: "펀드 고객2" },
-  { value: "customer_fund3", label: "펀드 고객3" },
-  { value: "black_longterm", label: "블랙(장기)" },
-  { value: "black_notIdentity", label: "블랙(신원 미확인)" },
-  { value: "black_wrongnumber", label: "블랙(오번호)" },
+  { value: "els", label: "기타 DB" },
+  { value: "stock_new", label: "신규 DB(주식)" },
+  { value: "stock_old", label: "구 DB(주식)" },
+  { value: "coin_new", label: "신규 DB(코인)" },
+  { value: "coin_old", label: "구 DB(코인)" },
+  { value: "potential", label: "가망 DB" },
+  { value: "customer_fund1", label: "펀드 1(도지 채굴기)" },
+  { value: "customer_fund2", label: "펀드 2(데이터 센터)" },
+  { value: "customer_fund3", label: "펀드 3(VAST 코인)" },
+  { value: "black_longterm", label: "부재" },
+  { value: "black_notIdentity", label: "단선" },
+  { value: "black_wrongnumber", label: "결번" },
 ];
 
 export default function AssignDBTypeActions({
